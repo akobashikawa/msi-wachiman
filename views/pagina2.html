@@ -172,20 +172,6 @@
         <script charset="utf-8" type="text/javascript" src="assets/js/jquery.url.js"></script>
         <script charset="utf-8" type="text/javascript">
 
-        $(document).ready(function() {
-
-            var latitud = $.urlParam('latitud');
-            var longitud = $.urlParam('longitud');
-            var sector = $.urlParam('sector');
-
-            $('#latitud').val(latitud);
-            $('#longitud').val(longitud);
-            $('#sector').val(sector);
-
-            console.log(latitud, longitud, sector);
-
-        });
-
         /**
         */
         function validacion() {
@@ -210,7 +196,14 @@
             return true;
         }
 
+        // Init App
+        window.onload = function() {
+            var latitud = $.urlParam('latitud');
+            var longitud = $.urlParam('longitud');
+            var sector = $.urlParam('sector');
 
+            console.log(latitud, longitud, sector);
+        };
         </script>
     </body>
 </html>
