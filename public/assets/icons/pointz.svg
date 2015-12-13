@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 18.1.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="100px"
+	 height="100px" viewBox="0 0 100 100" enable-background="new 0 0 100 100" xml:space="preserve">
+<g id="bg" display="none">
+	<rect display="inline" fill="#53FF84" fill-opacity="0.3" width="100" height="100"/>
+</g>
+<g id="circle" display="none">
+	<circle display="inline" opacity="0.7" fill="#50AFFF" cx="50" cy="50" r="50"/>
+</g>
+<g id="bright">
+	<g>
+		<path fill="#FFA40D" d="M50,2.5c26.2,0,47.5,21.3,47.5,47.5S76.2,97.5,50,97.5S2.5,76.2,2.5,50S23.8,2.5,50,2.5 M50,0.5
+			C22.7,0.5,0.5,22.7,0.5,50S22.7,99.5,50,99.5S99.5,77.3,99.5,50S77.3,0.5,50,0.5L50,0.5z"/>
+	</g>
+	<circle fill="#FFA40D" cx="50" cy="50" r="40"/>
+</g>
+<g id="bg_1_" display="none">
+	<rect y="0.3" display="inline" fill="#F7FF3D" fill-opacity="0.45" width="50" height="50"/>
+</g>
+</svg>

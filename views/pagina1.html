@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es" ng-app="app">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">        <link rel="shortcut icon" type="image/png" href="favicon.png"/>
+        <title>Home</title>
+        <link rel="stylesheet" href="/assets/lib/bootstrap/dist/css/bootstrap.css" media="screen" title="no title" charset="utf-8">
+        <link rel="stylesheet" href="/assets/css/base.css" media="screen" charset="utf-8">
+        <link rel="stylesheet" href="/assets/css/style.css" media="screen" charset="utf-8">
+        <script type="text/javascript">
+        var context = { "name" : "Wachiman", "url" : "http://localhost/acopitan/wachiman" }
+        </script>
+    </head>
+    <body>
+        <div class="wrapper">
+            <div class="container">
+                <div class="row app-header debug">
+                    <div class="col-md-1 col-xs-2">
+                        <div class="div-logo">
+                            <img src="/assets/images/logo.png" >
+                        </div>
+                    </div>
+
+                    <div class="col-md-7 col-xs-7 pull-left">
+                        <div class="">
+                            <button class="btn btn-large btn-danger my-btn-top">Peligro</button>
+                            <button class="btn btn-large btn-warning my-btn-top">Ten Cuidado</button>
+                            <button class="btn btn-large btn-success my-btn-top">A salvo</button>
+
+                        </div>
+                    </div>
+
+                    <div class="col-md-3 col-xs-3 pull-right">
+                        <span class="status-area">
+                            <h2>Estatus del Area</h2>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- body -->
+                <div class="row app-body debug ">
+                    <!-- popups -->
+                    <div class="row_ app-alert">
+                        <form id="reportar" action="/pagina2" method="get">
+                            <input type="image" src="/assets/images/alert.png" style="box-shadow: 3px 5px 5px #888888;">
+                            <input type="hidden" name="longitud" id="longitud" value="">
+                            <input type="hidden" name="latitud" id="latitud" value="">
+                            <input type="hidden" name="sector" id="sector" value="4-2">
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- map -->
+        <div id="map">
+        </div>
+        <!-- modal-alert -->
+
+
+        <!-- libs -->
+        <script charset="utf-8" type="text/javascript" src="/assets/lib/jquery/dist/jquery.js"></script>
+        <script charset="utf-8" type="text/javascript" src="/assets/js/jquery.url.js"></script>
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&amp;language=es"></script>
+    <script type="text/javascript" src="/assets/js/js.js"></script>
+
+
+
+    </body>
+</html>

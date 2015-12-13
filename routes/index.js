@@ -2,13 +2,75 @@ var express = require('express');
 var request = require('request');
 var router = express.Router();
 var fs = require('fs');
-var jsonfile = __dirname + '/apoyo-opera-a-pnp-pretty.json';
+var jsonfile = __dirname + '/consolidado-pretty-1k.json';
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
 
-    res.render('index.html', {
-        title: 'Express'
+    res.render('pagina1.html');
+
+});
+
+router.get('/pagina2', function(req, res, next) {
+
+    res.render('pagina2.html');
+
+});
+
+router.get('/general', function(req, res, next) {
+
+    res.render('general.html');
+
+});
+
+router.get('/general-chart', function(req, res, next) {
+
+    var data = fs.readFileSync(jsonfile);
+    var items = JSON.parse(data);
+
+    var oCategorias = {};
+    for (var i = 0; i < items.length; i++) {
+        var item = items[i];
+        var sector = item.sector.substr(0,1);
+        console.log(item.categoria, item.sector);
+        if (oCategorias[item.categoria] == undefined) {
+            oCategorias[item.categoria] = {};
+            oCategorias[item.categoria][sector.toString()] = 1;
+        } else {
+            oCategorias[item.categoria][sector.toString()] += 1;
+        }
+    }
+    console.log(oCategorias);
+    var aCategorias = [];
+    for (key in oCategorias) {
+        aCategorias.push(key);
+    }
+    console.log(aCategorias);
+
+    res.render('general-chart.html', {
+        data: JSON.stringify({
+            chart: {
+                type: 'bar'
+            },
+            title: {
+                text: 'Incidentes'
+            },
+            xAxis: {
+                categories: aCategorias
+            },
+            yAxis: {
+                title: {
+                    text: 'Número de incidentes'
+                }
+            },
+            series: [{
+                name: 'Jane',
+                data: [1, 0, 4]
+            }, {
+                name: 'John',
+                data: [5, 7, 3]
+            }]
+        })
     });
 
 });
@@ -46,7 +108,7 @@ router.get('/importitems', function(req, res, next) {
                     "hora": item[7],
                     "modalidad": item[8],
                     "medio": item[9],
-                    "sector": item[10]
+                    "sector": item[10] || '0-0'
                 });
             }
             if (action == 'append') {
@@ -71,6 +133,93 @@ router.get('/api/items', function(req, res, next) {
     var data = fs.readFileSync(jsonfile);
     var items = JSON.parse(data);
     return res.json(items);
+
+});
+
+router.get('/api/sectores', function(req, res, next) {
+
+    var data = fs.readFileSync(jsonfile);
+    var items = JSON.parse(data);
+
+    // agrupar
+    var oSubsectores = {};
+    for (var i = 0; i < items.length; i++) {
+        var item = items[i];
+        var nombre = item.sector;
+        if (oSubsectores[nombre] == undefined) {
+            oSubsectores[nombre] = 1;
+        } else {
+            oSubsectores[nombre] += 1;
+        }
+    }
+    // listar
+    var aSubsectores = [];
+    var maxNumreportesSubsector = 0;
+    for (key in oSubsectores) {
+        var item = {
+            nombre: key,
+            numreportes: oSubsectores[key]
+        };
+        if (maxNumreportesSubsector < item.numreportes) {
+            maxNumreportesSubsector = item.numreportes;
+        }
+        aSubsectores.push(item);
+    }
+    // ordenar por nombre
+    aSubsectores.sort(function(a, b) {
+        if (a.nombre < b.nombre) {
+            return -1;
+        }
+        if (a.nombre > b.nombre) {
+            return 1;
+        }
+        return 0;
+    });
+    console.log('aSubsectores: ', aSubsectores);
+    // agrupar por sectores
+    var oSectores = {};
+    for (var k = 0; k < aSubsectores.length; k++) {
+        var item = aSubsectores[k];
+        item.color = 'green';
+        if (item.numreportes > maxNumreportesSubsector / 3) {
+            item.color = 'orange';
+        }
+        if (item.numreportes > 2 * maxNumreportesSubsector / 3) {
+            item.color = 'red';
+        }
+
+        var nombreSector = item.nombre.substring(0, 1);
+        if (oSectores[nombreSector] == undefined) {
+            oSectores[nombreSector] = {
+                nombre: nombreSector,
+                numreportes: item.numreportes || 0,
+                subsectores: []
+            };
+            oSectores[nombreSector].subsectores.push(item);
+        } else {
+            oSectores[nombreSector].numreportes += item.numreportes;
+            oSectores[nombreSector].subsectores.push(item);
+        }
+    }
+    console.log('maxNumreportesSubsector', maxNumreportesSubsector);
+    console.log('oSectores', oSectores);
+    // listar
+    var aSectores = [];
+    for (key in oSectores) {
+        var item = oSectores[key];
+        item.nombre = key;
+        item.numreportesPromedio = item.numreportes / item.subsectores.length;
+        item.color = 'green';
+        if (item.numreportesPromedio > maxNumreportesSubsector / 3) {
+            item.color = 'orange';
+        }
+        if (item.numreportesPromedio > 2 * maxNumreportesSubsector / 3) {
+            item.color = 'red';
+        }
+        aSectores.push(item);
+    }
+    console.log(aSectores);
+    return res.json(aSectores);
 
 });
 

@@ -1,0 +1,117 @@
+html, body {
+	height: 100%;
+	margin: 0;
+	padding: 0;
+}
+
+.debug {
+	border:0px solid red;
+}
+
+.wrapper {
+	z-index:100;
+	position: relative;
+}
+
+/**
+* HEADER
+*/
+#map {
+  height: 100%;
+  position: absolute;
+  top: 0;
+  bottom: -200px;
+  left: 0;
+  right: 0;
+  z-index: 0;
+}
+.app-header{
+	padding:5px;
+    background-color: white;
+}
+.wrapper {
+	/*height:100vh;*/
+	background-color:transparent;
+}
+.my-btn-top{
+	width: 28%;
+}
+.status-area {
+
+}
+.status-area h2 {
+    font-size: 18px;
+	display: inline;
+	line-height: 32px;
+}
+
+.div-logo img {
+    height: 30px
+}
+
+/**
+* BODY
+*/
+.app-body {
+	position: relative;
+	/*min-height: 92vh;*/
+}
+
+/**
+* Footer
+*/
+
+/**
+* Extra
+*/
+.app-alert {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0.5%;
+}
+
+.app-alert img {
+	width:100;
+}
+
+
+/**
+* mediaquery
+*/
+/** iphone 6  and PLUS*/
+/*
+@media all and (min-device-width: 375px) and (max-device-width: 627px) {
+*/
+@media all and (min-device-width: 360px) and (max-device-width: 640px) {
+	body {
+		background-color: white;
+	}
+	.container {
+		width: auto;
+	}
+
+	.facet_sidebar {
+		display: none;
+	}
+	.my-btn-top {
+		width: 31%;
+		height: 100px;
+		font-size: 21px;
+	}
+	.status-area h2 {
+		font-size: 45px;
+		line-height:normal;
+		display: inline;
+	}
+	.div-logo img {
+	    height: 100px;
+	    width: auto;
+	}
+	.app-alert {
+	    position: absolute;
+	    top: 0;
+	    right: 0;
+	    padding: 1%;
+	}
+}
