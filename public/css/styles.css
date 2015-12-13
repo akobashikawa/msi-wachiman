@@ -2,4 +2,8 @@
 body {
   margin-top: 50px; }
 
+/* line 5, styles.scss */
+th.clickable {
+  cursor: pointer; }
+
 /*# sourceMappingURL=styles.css.map */

@@ -2,6 +2,7 @@ var express = require('express');
 var request = require('request');
 var router = express.Router();
 var fs = require('fs');
+var jsonfile = __dirname + '/apoyo-opera-a-pnp-pretty.json';
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -12,13 +13,64 @@ router.get('/', function(req, res, next) {
 
 });
 
+router.get('/importitems', function(req, res, next) {
+
+    var urlbase = 'http://api.datosabiertos.msi.gob.pe/datastreams/invoke/';
+    var guid = 'CONSO-INTER-SEREN-31211';
+    var key = '36bbab417f3b3b13d76b45a8fc30c39e652e2cca';
+    var limit = req.query.limit || '10';
+    var page = req.query.page || '0';
+    var action = req.query.action || 'write';
+    console.log(limit, page);
+    var url = urlbase + guid + '?auth_key=' + key + '&output=json_array&limit=' + limit + '&page=' + page;
+
+    console.log('url: %s', url);
+    request(url, function(error, response, body) {
+        if (!error && response.statusCode == 200) {
+            var bodyJson = JSON.parse(body);
+            var result = bodyJson.result;
+            var prettyJson = [];
+            for (var i = 0; i < result.length; i++) {
+                if (page == '0' && i == 0) {
+                    continue;
+                }
+                var item = result[i];
+                prettyJson.push({
+                    "id": item[0],
+                    "tipo": item[1],
+                    "categoria": item[2],
+                    "numero": item[3],
+                    "caso": item[4],
+                    "dia": item[5],
+                    "fecha": item[6],
+                    "hora": item[7],
+                    "modalidad": item[8],
+                    "medio": item[9],
+                    "sector": item[10]
+                });
+            }
+            if (action == 'append') {
+                var data = fs.readFileSync(jsonfile);
+                fs.writeFileSync(jsonfile, JSON.stringify(JSON.parse(data).concat(prettyJson)));
+            } else {
+                fs.writeFileSync(jsonfile, JSON.stringify(prettyJson));
+            }
+            return res.json(prettyJson);
+        }
+    });
+
+});
+
 router.get('/api/items', function(req, res, next) {
 
-    fs.readFile(__dirname + '/apoyo-opera-a-pnp-pretty.json', function(err, data) {
-        if (err) throw err;
-        var items = JSON.parse(data);
-        return res.json(items);
-    });
+    // fs.readFile(jsonfile, function(err, data) {
+    //     if (err) throw err;
+    //     var items = JSON.parse(data);
+    //     return res.json(items);
+    // });
+    var data = fs.readFileSync(jsonfile);
+    var items = JSON.parse(data);
+    return res.json(items);
 
 });
 
@@ -26,92 +78,109 @@ router.get('/api/items/:id', function(req, res, next) {
 
     var id = req.params.id;
 
-    fs.readFile(__dirname + '/apoyo-opera-a-pnp-pretty.json', function(err, data) {
-        if (err) throw err;
-        var prettyJson = JSON.parse(data);
-        var match = prettyJson.filter(function(el) {
-            return el.id == id;
-        });console.log('match', match);
-        if (match.length) {
-            item = match;
-        } else {
-            item = [{}];
-        }
-        return res.json(item[0]);
+    // fs.readFile(jsonfile, function(err, data) {
+    //     if (err) throw err;
+    //     var prettyJson = JSON.parse(data);
+    //     var match = prettyJson.filter(function(el) {
+    //         return el.id == id;
+    //     });
+    //     if (match.length) {
+    //         item = match;
+    //     } else {
+    //         item = [{}];
+    //     }
+    //     return res.json(item[0]);
+    // });
+
+    var data = fs.readFileSync(jsonfile);
+    var prettyJson = JSON.parse(data);
+    var match = prettyJson.filter(function(el) {
+        return el.id == id;
     });
+    if (match.length) {
+        item = match;
+    } else {
+        item = [{}];
+    }
+    return res.json(item[0]);
 
 });
+
+function isEmpty(obj) {
+    for (var prop in obj) {
+        if (obj.hasOwnProperty(prop))
+            return false;
+    }
+
+    return true;
+}
 
 router.post('/api/items', function(req, res, next) {
-    console.log(req);
-
-    return res.json({});
+    var item = req.body;
+    if (isEmpty(item)) {
+        return res.json({});
+    }
+    // fs.readFile(jsonfile, function(err, data) {
+    //     if (err) throw err;
+    //     var items = JSON.parse(data);
+    //     var lastItem = items[items.length - 1];
+    //     var id = parseInt(lastItem.id) + 1;
+    //     item.id = id.toString(10);
+    //     console.log(item);
+    //     items.push(item);
+    //     console.log(items);
+    //     fs.writeFile(jsonfile, JSON.stringify(items), function(err, data) {
+    //         if (err) throw err;
+    //         return res.json(item);
+    //     });
+    // });
+    var data = fs.readFileSync(jsonfile);
+    var items = JSON.parse(data);
+    var lastItem = items[items.length - 1];
+    var id = parseInt(lastItem.id) + 1;
+    item.id = id.toString(10);
+    items.push(item);
+    fs.writeFileSync(jsonfile, JSON.stringify(items));
+    return res.json(item);
 });
 
-router.get('/data', function(req, res, next) {
+router.delete('/api/items/:id', function(req, res, next) {
 
-    var mockup = !req.query.mockup || (req.query.mockup && req.query.mockup == 'yes');
+    var id = req.params.id;
 
-    if (!mockup) {
+    // fs.readFile(jsonfile, function(err, data) {
+    //     if (err) throw err;
+    //     var prettyJson = JSON.parse(data);
+    //     var match = prettyJson.filter(function(el) {
+    //         return el.id == id;
+    //     });
+    //     if (match.length) {
+    //         var items = prettyJson.filter(function(el) {
+    //             return el.id != id;
+    //         });
+    //         fs.writeFile(jsonfile, JSON.stringify(items), function(err, data) {
+    //             if (err) throw err;
+    //             return res.json(match[0]);
+    //         });
+    //     } else {
+    //         return res.json({});
+    //     }
+    // });
 
-        var urlbase = req.query.urlbase;
-        var guid = req.query.guid;
-        var key = req.query.key;
-
-        if (!urlbase || !guid || !key) {
-            res.status(400).json({
-                'error': 'Por favor enviar guid y key'
-            });
-            return;
-        }
-
-        var limit = req.query.limit ? req.query.limit : '10';
-        var url = urlbase + guid + '?auth_key=' + key + '&limit=' + limit;
-
-        request(url, function(error, response, body) {
-            if (!error && response.statusCode == 200) {
-                res.json(body);
-                return;
-            }
-            console.log(error, response, body);
-            res.json({
-                'error': 'No se pudo realizar la consulta'
-            });
-            return;
+    var data = fs.readFileSync(jsonfile);
+    var prettyJson = JSON.parse(data);
+    var match = prettyJson.filter(function(el) {
+        return el.id == id;
+    });
+    if (match.length) {
+        var items = prettyJson.filter(function(el) {
+            return el.id != id;
         });
-
+        fs.writeFileSync(jsonfile, JSON.stringify(items));
+        return res.json(match[0]);
+    } else {
+        return res.json({});
     }
-
-    if (mockup) {
-        fs.readFile(__dirname + '/apoyo-opera-a-pnp-pretty.json', function(err, data) {
-            if (err) throw err;
-            /*
-            var dataJson = JSON.parse(data);
-            var result = dataJson.result;
-            var prettyJson = [];
-            for (var i = 1; i < result.length; i++) {
-                var item = result[i];console.log(i, item);
-                prettyJson[i-1] = {
-                    id: item[0],
-                    tipo: item[1],
-                    categoria: item[2],
-                    numero: item[3],
-                    caso: item[4],
-                    dia: item[5],
-                    fecha: item[6],
-                    hora: item[7],
-                    modalidad: item[8],
-                    medio: item[9],
-                    sector: item[10]
-                };
-            }
-            */
-            var prettyJson = JSON.parse(data);
-            console.log(prettyJson);
-            return res.json(prettyJson);
-        });
-    }
-
 });
 
 module.exports = router;
