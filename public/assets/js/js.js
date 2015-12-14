@@ -16,7 +16,7 @@ function initMap(datosreporte) {
 	};
 
 	if (window.screen.availWidth <= 500) {
-		options.zoom = 24;
+		options.zoom = 18;
 		markerSVG.scaledSize = new google.maps.Size(200, 200);
 	}
 

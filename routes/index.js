@@ -291,6 +291,7 @@ router.post('/api/items', function(req, res, next) {
     items.push(item);
     fs.writeFileSync(jsonfile, JSON.stringify(items));
     return res.json(item);
+    //return res.redirect('/');
 });
 
 router.delete('/api/items/:id', function(req, res, next) {
